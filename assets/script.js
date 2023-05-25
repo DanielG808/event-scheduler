@@ -13,16 +13,31 @@ var savedEvents = JSON.parse(localStorage.getItem("schedule-event")) || {};
 //FUCNTIONS
 
 $(function () {
-  // TODO: Add a listener for click events on the save button. This code should
-  // use the id in the containing time-block as a key to save the user input in
-  // local storage. HINT: What does `this` reference in the click listener
-  // function? How can DOM traversal be used to get the "hour-x" id of the
-  // time-block containing the button that was clicked? How might the id be
-  // useful when saving the description in local storage?
 
   var currentHour = dayjs().hour()
   console.log("The current hour is " + currentHour)
-  
+
+  var hourElement = $('[id^="hour-"]');
+
+  hourElement.each( function () {
+    // (this.id.replace('hour-', '')) takes the last piece of the id of each div and outputs it as a string
+    // parseInt((this.id.replace('hour-', ''))) takes string out and converts it to an int so we can compare it to 'currentHour', which has an int value
+    // gets the difference between the current hour and the hour of each text area and returns an integer
+    var diffFromCurrentHour = dayjs(parseInt((this.id.replace('hour-', '')))).diff(currentHour);
+    console.log(diffFromCurrentHour);
+    
+    // using the difference in time between each time block and the current time, uses conditional to assign styling to each textarea
+    if (diffFromCurrentHour === 0) {
+      $(this).addClass("present");
+    }
+    else if (diffFromCurrentHour > 0) {
+      $(this).addClass("future");
+    }
+    else {
+      $(this).addClass("past");
+    }
+  })
+
   function getDate () {
     console.log("we are getting the date!");
     var currentDate = dayjs().format('dddd MMMM D, YYYY');
@@ -33,23 +48,22 @@ $(function () {
 
   function populateSavedEvents(){
     console.log("function is running")
-    // get a list of the keys from the savedEvents obj
-    var savedEventKeys = Object.keys(savedEvents);
-    console.log("The event keys are " + savedEventKeys)
-    var savedEventValues = Object.values(savedEvents)
-    console.log("The event values are " + savedEventValues)
-    console.log(typeof savedEventKeys)  
+    // loops thru the values of saved events and adds text saved in local storage to each corresponding textarea 
     for (const property in savedEvents) {
       console.log(`${property}: ${savedEvents[property]}`);
       $("#" + property).children("textarea").val(savedEvents[property]);
     }
-      // at each iteraction, you'll have the key which is the id of an element
-      // now that you have the id use that to target the html element and get the child class description
-      // now that you have the class description change its value with the value of the key
+      
     
   }
   // USER INTERACTIONS
   
+  // TODO: Add a listener for click events on the save button. This code should
+  // use the id in the containing time-block as a key to save the user input in
+  // local storage. HINT: What does `this` reference in the click listener
+  // function? How can DOM traversal be used to get the "hour-x" id of the
+  // time-block containing the button that was clicked? How might the id be
+  // useful when saving the description in local storage?
   saveButton.on('click', function() {
     console.log("Save button clicked!");
     // grab the sibiling of the button - textarea
