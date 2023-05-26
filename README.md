@@ -1,4 +1,4 @@
-# Coding Quiz App
+# Work Event Scheduler
 
 ## Description
 
